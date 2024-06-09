@@ -18,6 +18,15 @@
       <h6 class="card-subtitle mb-2 text-body-secondary">Project slug: {{$project->slug}}</h6>
       <h6 class="card-subtitle mb-2 text-body-secondary">Client name: {{$project->client_name}}</h6>
       <h6 class="card-subtitle mb-2 text-body-secondary">Project type: {{$project->type ? $project->type->name : 'No type selected'}}</h6>
+      <h6 class="card-subtitle mb-2 text-body-secondary">Project technologies: 
+         @if (count($project->technologies) > 0)
+            @foreach ($project->technologies as $technology)
+                {{$technology->name}}-
+            @endforeach
+        @else
+            No technology assigned to the project
+        @endif
+      </h6>
       <p class="card-text">{{$project->summary}}</p>
     </div>
 </div>
