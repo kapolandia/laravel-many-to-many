@@ -34,6 +34,7 @@
       <label for="exampleInputPassword1" class="form-label">Client Name</label>
       <input type="text" class="form-control" id="exampleInputPassword1" name="client_name" value="{{$project->client_name}}">
     </div>
+
     <div class="mb-3">
       <label for="type" class="form-label">Project Type</label>
       <select class="form-select" id="type" name="type_id">
@@ -43,6 +44,23 @@
         @endforeach
       </select>
     </div>
+
+    <div class="mb-3">
+      <h5>Technologies</h5>
+      @foreach ($technologies as $technology)
+        <div class="form-check">
+          @if ($errors->any())
+            <input class="form-check-input" @checked(in_array($technology->id, old('technologies', []))) name="technologies[]" type="checkbox" value="{{ $technology->id }}" id="technology-{{ $technology->id }}">
+          @else
+            <input class="form-check-input" @checked($project->technologies->contains($technology)) name="technologies[]" type="checkbox" value="{{ $technology->id }}" id="technology-{{ $technology->id }}">
+          @endif
+          <label class="form-check-label" for="technology-{{ $technology->id }}">
+            {{ $technology->name }}
+          </label>
+        </div>
+      @endforeach
+    </div>
+    
     <div class="mb-3">
         <label for="exampleInputPassword2" class="form-label">Summary</label>
         <textarea type="text" class="form-control" id="exampleInputPassword2" name="summary" >{{$project->summary}}</textarea>

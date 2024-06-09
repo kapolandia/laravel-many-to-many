@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Type;
+use App\Models\Technology;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +32,8 @@ class ProjectController extends Controller
     public function create()
     {
         $types = Type::all();
-        return view('admin.projects.create', compact('types'));
+        $technologies = Technology::all();
+        return view('admin.projects.create', compact('types', 'technologies'));
     }
 
     /**
@@ -50,6 +52,7 @@ class ProjectController extends Controller
                 'summary' => 'nullable|min:10',
                 'cover_image' => 'nullable|image|max:256',
                 'type_id' => 'nullable|exists:types,id',
+                'technology_id' => 'exixts: technologies,id',
             ]
         );
 
@@ -66,6 +69,11 @@ class ProjectController extends Controller
         $newProject->slug = Str::slug($newProject->name, '-' );
         $newProject->save();
         $project = $newProject;
+
+        //add technologies if they are clicked
+        if($request->has('technologies')){
+            $newProject->technologies()->attach($formData['technologies']);
+        }
 
         //return view('admin.projects.show.' . $newProject->id, compact('project')); non riesco ad usarlo
         return redirect()->route('admin.projects.show', ['project' => $newProject->id])->with('message', $newProject->name . ' successfully created.');
@@ -91,7 +99,8 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $types = Type::all();
-        return view('admin.projects.edit', compact('project', 'types'));
+        $technologies = Technology::all();
+        return view('admin.projects.edit', compact('project', 'types', 'technologies'));
     }
 
     /**
@@ -115,6 +124,7 @@ class ProjectController extends Controller
                 'summary' => 'nullable|min:10',
                 'cover_image' => 'nullable|image|max:256',
                 'type_id' => 'nullable|exists:types,id',
+                'technology_id' => 'exixts: technologies,id',
             ]
         );
 
@@ -132,6 +142,11 @@ class ProjectController extends Controller
 
         $formData['slug'] = Str::slug($formData['name'], '-');
         $project->update($formData);
+        if($request->has('technologies')){
+            $project->technologies()->sync($formData['technologies']);
+        } else {
+            $project->technologies()->sync([]);
+        }
         return redirect()->route('admin.projects.show', ['project' => $project->id])->with('message', $project->name . ' successfully updated.');
     }
 

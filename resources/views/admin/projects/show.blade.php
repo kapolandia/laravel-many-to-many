@@ -21,7 +21,7 @@
       <h6 class="card-subtitle mb-2 text-body-secondary">Project technologies: 
          @if (count($project->technologies) > 0)
             @foreach ($project->technologies as $technology)
-                {{$technology->name}}-
+                {{$technology->name}} /
             @endforeach
         @else
             No technology assigned to the project
